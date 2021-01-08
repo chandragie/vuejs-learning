@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>VueJS SPA Example</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        .error{
+            color:red;
+        }
+
+        .input-group{
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header-component props_example="Yeay! Properties loaded!"></header-component>
+        <nav>
+            <router-link to="/">Home</router-link>
+            <router-link to="/about">About</router-link>
+            <router-link to="/list">List</router-link>
+        </nav>
+        <main>
+            <router-view v-bind:items="kelas" v-on:call-add-data-function-on-parent="addData" v-on:call-delete-data-function-on-parent="deleteData"></router-view>
+        </main>
+        <footer-component><p>This is <b>SLOT</b> example <br/> &copy; copyright 2020 :: vuejs-spa-example</p></footer-component>
+    </div>
+
+
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <script src="firebase.js"></script>
+    <script src="component.js"></script>
+    <script src="router.js"></script>
+
+    <script>
+        
+        //instantiate Vue
+        const vm = new Vue({
+            el:'#app',
+            router,
+            data:{
+                kelas : []
+            },
+            //testing lifecycle hooks
+            beforeCreate(){
+                console.log('before create');
+            },
+            mounted(){
+                console.log('mounted');
+            },
+            beforeUpdate(){
+                console.log('before update')
+            },
+            updated(){
+                console.log('updated')
+            },
+            created(){
+                //this works like post construct
+                // this.kelas = JSON.parse(localStorage.getItem('data')) || [];
+                console.log('created')
+
+                dbRef.on('value', this.resultData, this.handleError);
+            },
+            methods:{
+                resultData:function(items){
+                    this.kelas = []
+                    items.forEach(element => {
+                        let temp = {
+                            id:element.key,
+                            name:element.val().name,
+                            desc:element.val().desc,
+                            pic:element.val().pic
+                        }
+                        this.kelas.push(temp);
+                    });
+                },
+                handleError:function(e){
+                    console.log(e);
+                },
+                addData:function(data){
+                    dbRef.push({
+                        name:data.name,
+                        desc:data.desc,
+                        pic:data.pic
+                    })
+
+                },
+                deleteData:function(id){
+                    db.ref('datas/' + id).remove();
+                }
+            }
+        })
+    </script>
+</body>
+</html>
