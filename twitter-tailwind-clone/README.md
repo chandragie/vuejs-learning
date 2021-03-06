@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### Learning reference : [StephDietz](https://github.com/StephDietz/twitter-clone/)
